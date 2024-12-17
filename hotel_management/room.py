@@ -6,16 +6,10 @@ class Room:
         self.is_available: bool = True
 
     def mark_as_booked(self):
-        if self.is_available:
-            self.is_available = False
-            return f'Room {self.room_number} is booked.'
-        return f'Room {self.room_number} is available.'
+        self.is_available = False
 
     def mark_as_available(self):
-        if not self.is_available:
-            self.is_available = True
-            return f'Room {self.room_number} is available.'
-        return f'Room {self.room_number} is not available.'
+        self.is_available = True
 
     def __str__(self):
         return f'Room number: {self.room_number}, Room type: {self.room_type}, base price: {self.base_price}, Status: {"Available" if self.is_available else "Booked"}'
