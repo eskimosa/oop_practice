@@ -1,63 +1,67 @@
-from room import Room
-from booking import Booking
-from customer import Customer
-from hotel import Hotel
 from datetime import date
-from pricing import PricingStrategy, StandardPricing, WeekendPricing, LoyaltyMemberPricing
+from hotel import Hotel
+from room import Room
+from customer import Customer
 
 
-def start():
+def main():
     hotel = Hotel()
 
-    room_1 = Room('1', 'double', 127.90)
-    room_2 = Room('2', 'single', 100.00)
-    room_3 = Room('3', 'double', 150.00)
+    room1 = Room('101', 'Single', 100)
+    room2 = Room('102', 'Single', 100)
+    room3 = Room('201', 'Double', 200)
+    room4 = Room('202', 'Double', 200)
 
-    print('Adding rooms...')
-    print(hotel.add_room(room_1))
-    print(hotel.add_room(room_2))
-    print(hotel.add_room(room_3))
+    print(hotel.add_room(room1))
+    print(hotel.add_room(room2))
+    print(hotel.add_room(room3))
+    print(hotel.add_room(room4))
+    print(hotel.add_room(room1))  # Should return room 101 already exists
 
-    print('Listing rooms from hotel...')
+    print("\n--- List of Rooms ---")
     print(hotel.list_rooms())
 
-    print('Removing rooms...')
-    print(hotel.remove_room('3'))
+    print("\nRemoving room 102...")
+    print(hotel.remove_room('102'))  # Should remove room 102
+    print(hotel.remove_room('999'))  # Should return room does not exist
 
-    print('Listing rooms after removal of 3 from hotel...')
+    print("\n--- List of Rooms after removal ---")
     print(hotel.list_rooms())
 
-    print('Marking room as booked:')
-    print(room_1.mark_as_booked())
-    print('Listing rooms after marking one as booked...')
-    print(hotel.list_rooms())
+    customer1 = Customer('C001', 'Alice', False)
+    customer2 = Customer('C002', 'Bob', True)
 
-    print('Marking room as available:')
-    print(room_1.mark_as_available())
-    print('Listing rooms after marking one as available...')
-    print(hotel.list_rooms())
+    start_date = date(2024, 12, 18)
+    end_date = date(2024, 12, 20)
 
-    print('Marking room as available:')
-    print(room_1.mark_as_available())
-    print('Listing rooms after marking one as available...')
-    print(hotel.list_rooms())
+    print("\n--- Booking a Room ---")
+    print(hotel.book_room(customer1, room1, start_date, end_date))  # Should book room 101 for Alice
 
-    print('Adding Customers...')
-    albert = Customer('1', 'Albert', True)
-    genia = Customer('2', 'Genia', True)
+    print("\n--- List of Bookings ---")
+    print(hotel.list_bookings())
 
-    print(albert)
-    print(genia)
+    print("\nTrying to book the same room for the same period (room should not be available):")
+    print(hotel.book_room(customer2, room1, start_date, end_date))
 
-    pricing_strategy = StandardPricing()
+    weekend_start = date(2024, 12, 21)  # This period includes a weekend (Saturday/Sunday)
+    weekend_end = date(2024, 12, 23)
+    print("\n--- Booking a Room for Weekend Pricing ---")
+    print(hotel.book_room(customer1, room3, weekend_start, weekend_end))  # Should apply weekend pricing
 
-    print('Adding Bookings...')
-    hotel.book_room(albert, room_1, date(2024, 12, 15), date(2024, 12, 20), pricing_strategy)
+    loyal_start = date(2024, 12, 24)
+    loyal_end = date(2024, 12, 25)
+    print("\n--- Booking a Room for Loyal Member ---")
+    print(hotel.book_room(customer2, room4, loyal_start, loyal_end))  # Should apply loyalty member pricing
 
-    # Check availability for a "single" room from 2024-12-03 to 2024-12-04
-    available_rooms = hotel.check_availability("single", date(2024, 12, 3), date(2024, 12, 4))
-    print([room.room_number for room in available_rooms])
+    print("\n--- Final List of Bookings ---")
+    print(hotel.list_bookings())
+
+    one_day_start = date(2024, 12, 26)
+    one_day_end = date(2024, 12, 26)
+    print("\n--- Booking for Just One Day ---")
+    print(hotel.book_room(customer1, room1, one_day_start, one_day_end))  # Should fail since room1 is already booked
 
 
-if __name__ == '__main__':
-    start()
+if __name__ == "__main__":
+    main()
+

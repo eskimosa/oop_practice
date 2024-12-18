@@ -1,30 +1,33 @@
 from abc import ABC, abstractmethod
+from room import Room
+from datetime import timedelta
 
 
 class PricingStrategy(ABC):
-
     @abstractmethod
-    def calculate_price(self, booking):
+    def calculate_price(self, weekdays, weekends, room: 'Room'):
         pass
-    # Abstract method to calculate the price for a booking.
+
 
 class StandardPricing(PricingStrategy):
-
-    def calculate_price(self, booking):
-        pass
-        # charge the base price of the room per day.
+    def calculate_price(self, weekdays, weekends, room):
+        total_price = room.base_price * (weekdays + weekends)
+        return total_price
 
 
 class WeekendPricing(PricingStrategy):
-    def calculate_price(self, booking):
-        pass
-    #  to apply a higher rate on weekends; The price should increase by 20% on weekends (Saturday and Sunday).
+    def calculate_price(self, weekdays, weekends, room):
+        weekends_price = (room.base_price * 1.2) * weekends
+        total_price = room.base_price * weekdays + weekends_price
+        return total_price
 
 
 class LoyaltyMemberPricing(PricingStrategy):
+    def calculate_price(self, weekdays, weekends, room):
+        weekday_price = room.base_price * weekdays
+        weekend_price = (room.base_price * 1.2) * weekends
+        total_price = weekday_price + weekend_price
 
-    def calculate_price(self, booking):
-        pass
-    #  apply a discount for loyal customers; Loyal customers (with is_loyal_member set to True) receive a 15% discount on all bookings.
-
-
+        loyalty_discount = 0.15
+        total_price_with_discount = total_price * (1 - loyalty_discount)
+        return total_price_with_discount
